@@ -3,10 +3,16 @@
   "plugins": [
     "typescript",
     "unicorn",
-    "oxc"
+    "oxc",
+    "eslint",
+    "import",
+    "promise",
+    "jsdoc"
   ],
   "categories": {
-    "correctness": "error"
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "warn"
   },
   "rules": {},
   "env": {
