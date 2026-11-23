@@ -2,6 +2,16 @@ import { test, expect } from "bun:test";
 import { parse } from "../../parser/index.ts";
 import { SectionId } from "../../parser/ast.ts";
 
+test("module check", async () => {
+  const wasm = await Bun.file(import.meta.dir + "/module.wasm").arrayBuffer();
+  const res = parse(wasm);
+
+  expect(res.isComponent).toBe(false);
+  expect(res.preamble.magic).toEqual([0x00, 0x61, 0x73, 0x6d]);
+  expect(res.preamble.version).toEqual([0x01, 0x00]);
+  expect(res.preamble.layer).toEqual([0x00, 0x00]);
+});
+
 test("custom section", async () => {
   const wasm = await Bun.file(import.meta.dir + "/custom.wasm").arrayBuffer();
   const res = parse(wasm);
