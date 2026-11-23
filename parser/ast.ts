@@ -6,10 +6,6 @@ export type Wasm =
     }
   | Component;
 
-export function isWasmComponent(wasm: Wasm): wasm is Component {
-  return wasm.isComponent;
-}
-
 export interface Component {
   isComponent: true;
   preamble: Preamble;
