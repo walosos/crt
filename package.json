@@ -1,0 +1,17 @@
+{
+  "name": "crt",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "typecheck": "bun check"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "oxfmt": "^0.79.0",
+    "oxlint": "^1.94.0",
+    "tsrs": "^7.1.0-beta.tsrs4"
+  },
+  "peerDependencies": {
+    "typescript": "^7"
+  }
+}
