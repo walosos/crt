@@ -146,7 +146,7 @@ class Parser {
     }
     pos = secbegin;
 
-    const secend = secbegin + len - 1;
+    const secend = secbegin + len;
 
     if (!ast.isSectionId(id)) {
       throw new Error(`id ${id} is not valid as section id`);
@@ -160,7 +160,7 @@ class Parser {
         }
         pos = next2;
 
-        const [bytes, next3] = this.copyRange(pos, secend + 1);
+        const [bytes, next3] = this.copyRange(pos, secend);
         if (bytes === undefined) {
           return [undefined, 0];
         }
