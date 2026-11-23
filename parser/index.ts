@@ -54,7 +54,7 @@ class Parser {
         {
           isComponent: false,
           preamble,
-          bytes: this.view.buffer.slice(pos),
+          bytes: this.view.buffer,
         },
         pos,
       ];
