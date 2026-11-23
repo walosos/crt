@@ -66,4 +66,6 @@ export interface CustomSec {
   bytes: ArrayBufferLike;
 }
 
-export interface CoreModuleSec {}
+export interface CoreModuleSec {
+  bytes: ArrayBufferLike;
+}
