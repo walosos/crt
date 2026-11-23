@@ -17,5 +17,10 @@
   "rules": {},
   "env": {
     "builtin": true
+  },
+  "options": {
+    "typeAware": true,
+    "typeCheck": true,
+    "reportUnusedDisableDirectives": "error"
   }
 }
