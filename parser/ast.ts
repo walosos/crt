@@ -100,3 +100,26 @@ export const enum CoreSort {
   Module = 0x11,
   Instance = 0x12,
 }
+
+export function intoCoreSort(byte: number): CoreSort | undefined {
+  switch (byte) {
+    case 0x00:
+      return CoreSort.Func;
+    case 0x01:
+      return CoreSort.Table;
+    case 0x02:
+      return CoreSort.Memory;
+    case 0x03:
+      return CoreSort.Global;
+    case 0x04:
+      return CoreSort.Tag;
+    case 0x10:
+      return CoreSort.Type;
+    case 0x11:
+      return CoreSort.Module;
+    case 0x12:
+      return CoreSort.Instance;
+    default:
+      return undefined;
+  }
+}
