@@ -154,25 +154,16 @@ class Parser {
 
     switch (id) {
       case ast.SectionId.Custom:
-        const [name, next2] = this.name(pos);
-        if (name === undefined) {
+        const [custom, next2] = this.customSection(pos, secend);
+        if (custom === undefined) {
           return [undefined, 0];
         }
         pos = next2;
 
-        const [bytes, next3] = this.copyRange(pos, secend);
-        if (bytes === undefined) {
-          return [undefined, 0];
-        }
-        pos = next3;
-
         return [
           {
             id: ast.SectionId.Custom,
-            kind: {
-              name,
-              bytes,
-            },
+            kind: custom,
           },
           pos,
         ];
@@ -195,6 +186,28 @@ class Parser {
       default:
         throw new Error("Not implemented yet: wasm section eath implement");
     }
+  }
+
+  private customSection(pos: number, secend: number): ParserResult<ast.CustomSec> {
+    const [name, next] = this.name(pos);
+    if (name === undefined) {
+      return [undefined, 0];
+    }
+    pos = next;
+
+    const [bytes, next2] = this.copyRange(pos, secend);
+    if (bytes === undefined) {
+      return [undefined, 0];
+    }
+    pos = next2;
+
+    return [
+      {
+        name,
+        bytes,
+      },
+      pos,
+    ];
   }
 
   private name(pos: number): ParserResult<string> {
