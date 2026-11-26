@@ -176,6 +176,22 @@ class Parser {
           },
           pos,
         ];
+      case ast.SectionId.CoreModule:
+        const [bytes2, next4] = this.copyRange(pos, secend);
+        if (bytes2 === undefined) {
+          return [undefined, 0];
+        }
+        pos = next4;
+
+        return [
+          {
+            id: ast.SectionId.CoreModule,
+            kind: {
+              bytes: bytes2,
+            },
+          },
+          pos,
+        ]
       default:
         throw new Error("Not implemented yet: wasm section eath implement");
     }
