@@ -181,6 +181,20 @@ class Parser {
           },
           pos,
         ];
+      case ast.SectionId.CoreInstances:
+        const [coreInstances, next4] = this.coreInstancesSection(pos);
+        if (coreInstances === undefined) {
+          return [undefined, 0];
+        }
+        pos = next4;
+
+        return [
+          {
+            id: ast.SectionId.CoreInstances,
+            kind: coreInstances,
+          },
+          pos,
+        ];
       default:
         throw new Error("Not implemented yet: wasm section eath implement");
     }
@@ -218,6 +232,156 @@ class Parser {
     return [
       {
         bytes,
+      },
+      pos,
+    ];
+  }
+
+  private coreInstancesSection(
+    pos: number,
+  ): ParserResult<ast.CoreInstanceSec[]> {
+    const [instances, next] = this.vec(this.coreInstance.bind(this), pos);
+    if (instances === undefined) {
+      return [undefined, 0];
+    }
+    pos = next;
+
+    return [instances, pos];
+  }
+
+  private coreInstance(pos: number): ParserResult<ast.CoreInstanceSec> {
+    const [type, next] = this.readU8(pos);
+    if (type === undefined) {
+      return [undefined, 0];
+    }
+    pos = next;
+
+    switch (type) {
+      case 0: {
+        const [moduleIndex, next2] = this.uN(32, pos);
+        if (moduleIndex === undefined) {
+          return [undefined, 0];
+        }
+        pos = next2;
+
+        const [args, next3] = this.vec(this.coreInstanceArg.bind(this), pos);
+        if (args === undefined) {
+          return [undefined, 0];
+        }
+        pos = next3;
+
+        return [
+          {
+            type: "instantiate",
+            moduleIndex,
+            args,
+          },
+          pos,
+        ];
+      }
+      case 1: {
+        const [exports, next2] = this.vec(
+          this.coreInstanceInlineExport.bind(this),
+          pos,
+        );
+        if (exports === undefined) {
+          return [undefined, 0];
+        }
+        pos = next2;
+
+        return [
+          {
+            type: "inlineexport",
+            exports,
+          },
+          pos,
+        ];
+      }
+      default:
+        throw new Error(`Unknown core instance type: ${type}`);
+    }
+  }
+
+  private coreInstanceArg(
+    pos: number,
+  ): ParserResult<{ name: string; instanceIndex: number }> {
+    const [name, next] = this.name(pos);
+    if (name === undefined) {
+      return [undefined, 0];
+    }
+    pos = next;
+
+    const [byte, next2] = this.readU8(pos);
+    if (byte === undefined) {
+      return [undefined, 0];
+    }
+    pos = next2;
+
+    if (byte != 0x12) {
+      return [undefined, 0];
+    }
+
+    const [instanceIndex, next3] = this.uN(32, pos);
+    if (instanceIndex === undefined) {
+      return [undefined, 0];
+    }
+    pos = next3;
+
+    return [
+      {
+        name,
+        instanceIndex,
+      },
+      pos,
+    ];
+  }
+
+  private coreInstanceInlineExport(
+    pos: number,
+  ): ParserResult<{ name: string; sortIndex: ast.CoreSortIdx }> {
+    const [name, next] = this.name(pos);
+    if (name === undefined) {
+      return [undefined, 0];
+    }
+    pos = next;
+
+    const [sortIndex, next2] = this.coreSortIndex(pos);
+    if (sortIndex === undefined) {
+      return [undefined, 0];
+    }
+    pos = next2;
+
+    return [
+      {
+        name,
+        sortIndex,
+      },
+      pos,
+    ];
+  }
+
+  private coreSortIndex(pos: number): ParserResult<ast.CoreSortIdx> {
+    const [byte, next] = this.readU8(pos);
+    if (byte === undefined) {
+      return [undefined, 0];
+    }
+    pos = next;
+
+    const sort = ast.intoCoreSort(byte);
+    if (sort === undefined) {
+      return [undefined, 0];
+    }
+
+    const [index, next2] = this.uN(32, pos);
+    if (index === undefined) {
+      return [undefined, 0];
+    }
+    pos = next2;
+
+    return [
+      {
+        sort,
+        index,
       },
       pos,
     ];
