@@ -207,6 +207,28 @@ class Parser {
     return [new TextDecoder().decode(Uint8Array.from(utf8)), pos];
   }
 
+  private vec<T>(elem: ParserSig<T>, pos: number): ParserResult<T[]> {
+    // n: element length
+    const [n, next] = this.readU8(pos);
+    if (n === undefined) {
+      return [undefined, 0];
+    }
+    pos = next;
+
+    let array: T[] = [];
+
+    for (let i = 1; i <= n; i++) {
+      const [e, next2] = elem(pos);
+      if (e === undefined) {
+        return [undefined, 0];
+      }
+      pos = next2;
+      array.push(e);
+    }
+
+    return [array, pos];
+  }
+
   private list<T>(elem: ParserSig<T>, pos: number): ParserResult<T[]> {
     // n: element length
     const [n, next] = this.uN(32, pos);
