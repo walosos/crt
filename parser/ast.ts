@@ -39,6 +39,10 @@ export type Section =
   | {
       id: SectionId.CoreModule;
       kind: CoreModuleSec;
+    }
+  | {
+      id: SectionId.CoreInstances;
+      kind: CoreInstanceSec[];
     };
 
 export const enum SectionId {
@@ -68,4 +72,31 @@ export interface CustomSec {
 
 export interface CoreModuleSec {
   bytes: ArrayBufferLike;
+}
+
+export type CoreInstanceSec =
+  | {
+      type: "instantiate";
+      moduleIndex: number;
+      args: { name: string; instanceIndex: number }[];
+    }
+  | {
+      type: "inlineexport";
+      exports: { name: string; sortIndex: CoreSortIdx }[];
+    };
+
+export interface CoreSortIdx {
+  sort: CoreSort;
+  index: number;
+}
+
+export const enum CoreSort {
+  Func = 0x00,
+  Table = 0x01,
+  Memory = 0x02,
+  Global = 0x03,
+  Tag = 0x04,
+  Type = 0x10,
+  Module = 0x11,
+  Instance = 0x12,
 }
